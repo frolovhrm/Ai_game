@@ -86,7 +86,7 @@ class Tetris:
     def _check_bullet_alien_collisions(self):
         # Проверка попаданияб, при обнаружении удаляем пришельца
         collisions = pygame.sprite.groupcollide(self.bullets, self.aliens, True, True)
-        if not  self.aliens:
+        if not self.aliens:
             # Уничтожение существующих снарядов и создание нового флота
             self.bullets.empty()
             self._create_fleet()
