@@ -5,15 +5,15 @@ from pygame.sprite import Sprite
 class Bullet(Sprite):
     """Клас для управления снарядами, выпущеными кораблем"""
 
-    def __init__(self, te_game):
+    def __init__(self, ai_game):
         super().__init__()
-        self.screen = te_game.screen
-        self.settings = te_game.settings
+        self.screen = ai_game.screen
+        self.settings = ai_game.settings
         self.color = self.settings.bullet_color
 
         # создание позиции снераяда
         self.rect = pygame.Rect(0, 0, self.settings.bullet_width, self.settings.bullet_height)
-        self.rect.midtop = te_game.cube.rect.midtop
+        self.rect.midtop = ai_game.ship.rect.midtop
 
         self.y = float(self.rect.y)
 

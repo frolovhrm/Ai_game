@@ -1,12 +1,14 @@
 import pygame
 import sys
 from settings import Settings
-from cube import Cube
+from ship import Ship
 from bullet import Bullet
 from alien import Alien
+from time import sleep
+from game_stats import GameStats
 
 
-class Tetris:
+class AlienInvasion:
     def __init__(self):
         pygame.init()
         self.settings = Settings()
@@ -17,9 +19,12 @@ class Tetris:
         # self.settings.screen_width = self.screen.get_rect().width
         # self.settings.screen_height = self.screen.get_rect().height
 
-        pygame.display.set_caption('Tetris')
+        pygame.display.set_caption('Alien Invision')
 
-        self.cube = Cube(self)
+        # Создание экземпляра для хранения статистики
+        self.stats = GameStats(self)
+
+        self.ship = Ship(self)
         self.bullets = pygame.sprite.Group()
         self.aliens = pygame.sprite.Group()
 
@@ -29,11 +34,14 @@ class Tetris:
         """Запуск основного цикла игры"""
         while True:
             self._check_evens()
-            self.cube.update()
-            self._update_dullets()
 
-            print(len(self.bullets))
-            self._update_aliens()
+            if self.stats.game_active:
+                self.ship.update()
+                self._update_dullets()
+                self._update_aliens()
+
+            print(f'{len(self.bullets)} - {self.stats.ships_left}')
+
 
             self._update_screen()
 
@@ -52,12 +60,19 @@ class Tetris:
         self._check_fleet_edges()
         self.aliens.update()
 
+        # Проверка коллизий "пришелец - корабль"
+        if pygame.sprite.spritecollideany(self.ship, self.aliens):
+            self._ship_hit()
+
+        # Проверка нижнего края
+        self._check_aliens_bottom()
+
     def _check_keydown_events(self, event):
         if event.key == pygame.K_RIGHT:
-            self.cube.moving_right = True
+            self.ship.moving_right = True
             print(event)
         elif event.key == pygame.K_LEFT:
-            self.cube.moving_left = True
+            self.ship.moving_left = True
             print(event)
         elif event.key == pygame.K_q:
             sys.exit()
@@ -66,9 +81,9 @@ class Tetris:
 
     def _check_keyup_events(self, event):
         if event.key == pygame.K_RIGHT:
-            self.cube.moving_right = False
+            self.ship.moving_right = False
         elif event.key == pygame.K_LEFT:
-            self.cube.moving_left = False
+            self.ship.moving_left = False
 
     def _fire_bullet(self):
         if len(self.bullets) < self.settings.bullet_allowed:
@@ -94,7 +109,7 @@ class Tetris:
     def _update_screen(self):
         """Обновление изображения на экране"""
         self.screen.fill(self.settings.bg_color)
-        self.cube.blitme()
+        self.ship.blitme()
         for bullet in self.bullets.sprites():
             bullet.draw_bullet()
         self.aliens.draw(self.screen)
@@ -110,7 +125,7 @@ class Tetris:
         number_aliens_x = available_spase_x // (2 * alien_width)
 
         """Определяем количество рядов"""
-        cube_heigth = self.cube.rect.height
+        cube_heigth = self.ship.rect.height
         available_spase_y = (self.settings.screen_height - (3 * alien_height) - cube_heigth)
         numbers_rows = available_spase_y // (3 * alien_height)
 
@@ -142,7 +157,34 @@ class Tetris:
             alien.rect.y += self.settings.fleet_drop_speed
         self.settings.fleet_direction *= -1
 
+    def _ship_hit(self):
+        if self.stats.ships_left > 0:
+            # Уменьшение ships_left
+            self.stats.ships_left -= 1
+
+            # Очистка списков пришельцев и снарядов
+            self.aliens.empty()
+            self.bullets.empty()
+
+            # Создание нового флота
+            self._create_fleet()
+            self.ship.center_ship()
+
+            # Пауза
+            sleep(0.5)
+
+        else:
+            self.stats.game_active = False
+
+    def _check_aliens_bottom(self):
+        """ Проверяет косание нижненго края"""
+        screen_rect = self.screen.get_rect()
+        for alien in self.aliens.sprites():
+            if alien.rect.bottom >= screen_rect.bottom:
+                self._ship_hit()
+                break
+
 
 if __name__ == '__main__':
-    te = Tetris()
-    te.run_game()
+    ai = AlienInvasion()
+    ai.run_game()

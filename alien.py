@@ -5,11 +5,11 @@ from pygame.sprite import Sprite
 class Alien(Sprite):
     """Класс представляющий одного пришельца"""
 
-    def __init__(self, te_game):
+    def __init__(self, ai_game):
         """Инициализирует пришельца и создает его начальную позицию"""
         super().__init__()
-        self.screen = te_game.screen
-        self.settings = te_game.settings
+        self.screen = ai_game.screen
+        self.settings = ai_game.settings
 
         # Загрузка пришельца и назначение rect
         self.image = pygame.image.load('Alien.png')
