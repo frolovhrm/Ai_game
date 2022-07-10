@@ -65,7 +65,7 @@ class AlienInvasion:
     def _check_play_button(self, mouse_pos):
         button_clicked = self.play_button.rect.collidepoint(mouse_pos)
         if button_clicked and not self.stats.game_active:
-            self.settings.initialize_dynamic_settings() # сброс настроек скорости
+            self.settings.initialize_dynamic_settings()  # сброс настроек скорости
             pygame.mouse.set_visible(False)
 
             # Сброс игровой статистики
@@ -126,12 +126,13 @@ class AlienInvasion:
         # Проверка попаданияб, при обнаружении удаляем пришельца
         collisions = pygame.sprite.groupcollide(self.bullets, self.aliens, True, True)
 
-
         if collisions:
             # подсчет попаданий для счета
             for aliens in collisions.values():
                 self.stats.score += self.settings.alien_points * len(aliens)
             self.sb.prep_score()
+            self.sb.check_high_score()
+
 
         if not self.aliens:
             # Уничтожение существующих снарядов и создание нового флота
@@ -222,7 +223,6 @@ class AlienInvasion:
             if alien.rect.bottom >= screen_rect.bottom:
                 self._ship_hit()
                 break
-
 
 
 if __name__ == '__main__':

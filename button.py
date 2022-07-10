@@ -26,4 +26,3 @@ class Button():
         """ Создание пустой кнопки и вывод сообщения"""
         self.screen.fill(self.button_color, self.rect)
         self.screen.blit(self.msg_image, self.msg_image_rect)
-
