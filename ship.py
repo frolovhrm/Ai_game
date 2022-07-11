@@ -1,12 +1,14 @@
 import pygame.image
+from pygame.sprite import Sprite
 
 
-class Ship():
-    def __init__(self, te_game):
+class Ship(Sprite):
+    def __init__(self, ai_game):
         """ Инициализирует форму и задает ее начальное положение"""
-        self.screen = te_game.screen
-        self.settings = te_game.settings
-        self.screen_rect = te_game.screen.get_rect()
+        super().__init__()
+        self.screen = ai_game.screen
+        self.settings = ai_game.settings
+        self.screen_rect = ai_game.screen.get_rect()
 
         """Загружает изображение и создает прямоугольник"""
         self.image = pygame.image.load('ship.bmp')
