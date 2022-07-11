@@ -66,7 +66,7 @@ class Scoreboard:
 
     def prep_level(self):
         """ преобразует уровень в графическое изображение"""
-        level_str = str(self.stats.level)
+        level_str = str(f'level {self.stats.level}')
         self.level_image = self.font.render(level_str, True, self.text_color, self.settings.bg_color)
 
         """ Уровень выводится под текщем счетом"""
